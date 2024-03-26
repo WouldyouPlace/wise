@@ -10,6 +10,6 @@ export function getPkgVersion() {
 
 export function printPkgVersion() {
   const taroVersion = getPkgVersion();
-  console.log(`Wise v${ taroVersion }`);
+  console.log(`wouldyouplace v${ taroVersion }`);
   console.log();   // 隔行
 }

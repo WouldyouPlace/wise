@@ -1,30 +1,29 @@
 {
-  "name": "@wisejs/cli",
+  "name": "@wouldyouplace/cli",
   "version": "1.0.0",
   "description": "cli tool",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node ./bin/wise -v",
     "build": "tsc",
     "test": "test"
   },
   "bin": {
-    "wise": "./bin/wise"
+    "wouldyouplace": "./bin/www"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WouldyouPlace/wisejs.git"
+    "url": "git+https://github.com/WouldyouPlace/wouldyouplacejs.git"
   },
   "keywords": [
-    "wisejs",
-    "wisecli"
+    "wouldyouplacejs",
+    "wouldyouplacecli"
   ],
   "author": "vijay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WouldyouPlace/wisejs/issues"
+    "url": "https://github.com/WouldyouPlace/wouldyouplacejs/issues"
   },
-  "homepage": "https://github.com/WouldyouPlace/wisejs#readme",
+  "homepage": "https://github.com/WouldyouPlace/wouldyouplacejs#readme",
   "dependencies": {
     "minimist": "^1.2.8"
   },

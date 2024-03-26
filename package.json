@@ -1,22 +1,22 @@
 {
-  "name": "wise",
+  "name": "wouldyouplace",
   "version": "1.0.0",
-  "description": "wisejs",
+  "description": "WouldYouPlace-js",
   "main": "index.js",
   "scripts": {
     "test": "test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WouldyouPlace/wise.git"
+    "url": "git+https://github.com/WouldyouPlace/wouldyouplace.git"
   },
   "keywords": [
-    "wisejs"
+    "wouldyouplacejs"
   ],
   "author": "vijay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WouldyouPlace/wise/issues"
+    "url": "https://github.com/WouldyouPlace/wouldyouplace/issues"
   },
-  "homepage": "https://github.com/WouldyouPlace/wise#readme"
+  "homepage": "https://github.com/WouldyouPlace/wouldyouplace#readme"
 }
