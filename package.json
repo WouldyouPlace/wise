@@ -1,7 +1,7 @@
 {
   "name": "wouldyouplace",
-  "version": "1.0.0",
-  "description": "WouldYouPlace-js",
+  "version": "1.0.5",
+  "description": "wouldyouplace-js",
   "main": "index.js",
   "scripts": {
     "test": "test"
@@ -16,7 +16,7 @@
   "author": "vijay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WouldyouPlace/wouldyouplace/issues"
+    "url": "https://github.com/WouldyouPlace/wise/issues"
   },
-  "homepage": "https://github.com/WouldyouPlace/wouldyouplace#readme"
+  "homepage": "https://github.com/WouldyouPlace/wise#readme"
 }

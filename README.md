@@ -1,3 +1,3 @@
-# WouldYouPlace
+# wouldyouplace
 
-WouldYouPlace-js
+wouldyouplace-js

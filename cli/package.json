@@ -1,29 +1,30 @@
 {
-  "name": "@wouldyouplace/cli",
-  "version": "1.0.0",
+  "name": "@wisejs/cli",
+  "version": "1.0.2",
   "description": "cli tool",
   "main": "index.js",
   "scripts": {
+    "start": "tsc && node ./bin/wise -v",
     "build": "tsc",
     "test": "test"
   },
   "bin": {
-    "wouldyouplace": "./bin/www"
+    "wise": "./bin/wise"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WouldyouPlace/wouldyouplacejs.git"
+    "url": "git+https://github.com/WouldyouPlace/calmsea.git"
   },
   "keywords": [
-    "wouldyouplacejs",
-    "wouldyouplacecli"
+    "calmsea",
+    "calmsea cli"
   ],
   "author": "vijay",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WouldyouPlace/wouldyouplacejs/issues"
+    "url": "https://github.com/WouldyouPlace/calmsea/issues"
   },
-  "homepage": "https://github.com/WouldyouPlace/wouldyouplacejs#readme",
+  "homepage": "https://github.com/WouldyouPlace/calmsea#readme",
   "dependencies": {
     "minimist": "^1.2.8"
   },
