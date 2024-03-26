@@ -1,0 +1,15 @@
+{
+  "name": "@wouldyouplace/service",
+  "version": "1.0.0",
+  "description": "core",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "wouldyouplace",
+    "wouldyouplace/service"
+  ],
+  "author": "vijay",
+  "license": "ISC"
+}

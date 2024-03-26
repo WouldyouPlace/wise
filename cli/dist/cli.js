@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const minimist_1 = __importDefault(require("minimist"));
 const utils_1 = require("./utils");
+const project_1 = __importDefault(require("./create/project"));
 class CLI {
     constructor(appPath) {
         this.appPath = appPath || process.cwd();
@@ -26,7 +27,15 @@ class CLI {
         });
         const _ = args._;
         const command = _[0];
+        console.log(args);
         if (command) {
+            switch (command) {
+                case 'init':
+                    {
+                        new project_1.default();
+                    }
+                    break;
+            }
             console.log(`这里是WYP工作台，您当前输入的命令：${command}`);
             console.log(`我说嘿，你说嘿`);
             console.log(`嘿嘿！！！`);

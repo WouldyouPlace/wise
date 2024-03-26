@@ -23,8 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.printPkgVersion = exports.getPkgVersion = exports.getRootPath = void 0;
+exports.getUserHomeDir = exports.clearConsole = exports.printPkgVersion = exports.checkNodeVersion = exports.getPkgVersion = exports.getRootPath = void 0;
 const path = __importStar(require("path"));
+const semver = __importStar(require("semver"));
+const os = __importStar(require("os"));
 function getRootPath() {
     return path.resolve(__dirname, '../../');
 }
@@ -33,9 +35,43 @@ function getPkgVersion() {
     return require(path.join(getRootPath(), 'package.json')).version;
 }
 exports.getPkgVersion = getPkgVersion;
+function checkNodeVersion() {
+    return semver.lt(process.version, 'v7.6.0');
+}
+exports.checkNodeVersion = checkNodeVersion;
 function printPkgVersion() {
     const taroVersion = getPkgVersion();
     console.log(`WouldYouPlace v${taroVersion}`);
     console.log(); // 隔行
 }
 exports.printPkgVersion = printPkgVersion;
+function clearConsole() {
+    const readline = require('readline');
+    if (process.stdout.isTTY) {
+        const blank = '\n'.repeat(process.stdout.rows);
+        console.log(blank);
+        readline.cursorTo(process.stdout, 0, 0);
+        readline.clearScreenDown(process.stdout);
+    }
+}
+exports.clearConsole = clearConsole;
+// 获取系统管理员目录
+function getUserHomeDir() {
+    function homedir() {
+        const env = process.env;
+        const home = env.HOME;
+        const user = env.LOGNAME || env.USER || env.LNAME || env.USERNAME;
+        if (process.platform === 'win32') {
+            return env.USERPROFILE || '' + env.HOMEDRIVE + env.HOMEPATH || home || '';
+        }
+        if (process.platform === 'darwin') {
+            return home || (user ? '/Users/' + user : '');
+        }
+        if (process.platform === 'linux') {
+            return home || (process.getuid() === 0 ? '/root' : (user ? '/home/' + user : ''));
+        }
+        return home || '';
+    }
+    return typeof os.homedir === 'function' ? os.homedir() : homedir();
+}
+exports.getUserHomeDir = getUserHomeDir;

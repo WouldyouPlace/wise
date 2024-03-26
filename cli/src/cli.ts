@@ -1,6 +1,7 @@
 import minimist from 'minimist';
 import path from 'path'
 import { getPkgVersion } from "./utils";
+import Project from "./create/project";
 
 class CLI {
     appPath: string;
@@ -24,11 +25,16 @@ class CLI {
         });
         const _ = args._;
         const command = _[0];
-
+        console.log(args)
         if(command) {
+            switch (command) {
+                case 'init': {
+                    new Project()
+                } break;
+            }
             console.log(`这里是WYP工作台，您当前输入的命令：${command}`)
             console.log(`我说嘿，你说嘿`)
-            console.log(`嘿嘿！！！`)
+            console.log(`嘿嘿！！！`);
         } else {
             if (args.h) {
                 console.log('Usage: taro <command> [options]')
