@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as semver from 'semver';
 import * as os from 'os';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 
 export function getRootPath() {
   return path.resolve(__dirname, '../../');
@@ -63,7 +63,7 @@ interface FileStat {
 }
 export function readDirWithFileTypes (folder: string): FileStat[] {
   const list = fs.readdirSync(folder)
-  const res = list.map(name => {
+  return list.map((name : string) => {
     const stat = fs.statSync(path.join(folder, name))
     return {
       name,
@@ -71,8 +71,4 @@ export function readDirWithFileTypes (folder: string): FileStat[] {
       isFile: stat.isFile()
     }
   })
-  return res
-}
-function getRootPath() {
-  return path.resolve(__dirname, '../../');
 }

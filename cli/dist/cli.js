@@ -32,7 +32,7 @@ class CLI {
             switch (command) {
                 case 'init':
                     {
-                        new project_1.default();
+                        new project_1.default({});
                     }
                     break;
             }

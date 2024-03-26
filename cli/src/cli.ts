@@ -29,7 +29,7 @@ class CLI {
         if(command) {
             switch (command) {
                 case 'init': {
-                    new Project()
+                    new Project({})
                 } break;
             }
             console.log(`这里是WYP工作台，您当前输入的命令：${command}`)

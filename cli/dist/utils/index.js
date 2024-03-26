@@ -23,10 +23,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserHomeDir = exports.clearConsole = exports.printPkgVersion = exports.checkNodeVersion = exports.getPkgVersion = exports.getRootPath = void 0;
+exports.readDirWithFileTypes = exports.getTemplateSourceType = exports.getUserHomeDir = exports.clearConsole = exports.printPkgVersion = exports.checkNodeVersion = exports.getPkgVersion = exports.getRootPath = void 0;
 const path = __importStar(require("path"));
 const semver = __importStar(require("semver"));
 const os = __importStar(require("os"));
+const fs = __importStar(require("fs-extra"));
 function getRootPath() {
     return path.resolve(__dirname, '../../');
 }
@@ -75,3 +76,24 @@ function getUserHomeDir() {
     return typeof os.homedir === 'function' ? os.homedir() : homedir();
 }
 exports.getUserHomeDir = getUserHomeDir;
+function getTemplateSourceType(url) {
+    if (/^github:/.test(url) || /^gitlab:/.test(url) || /^direct:/.test(url)) {
+        return 'git';
+    }
+    else {
+        return 'url';
+    }
+}
+exports.getTemplateSourceType = getTemplateSourceType;
+function readDirWithFileTypes(folder) {
+    const list = fs.readdirSync(folder);
+    return list.map((name) => {
+        const stat = fs.statSync(path.join(folder, name));
+        return {
+            name,
+            isDirectory: stat.isDirectory(),
+            isFile: stat.isFile()
+        };
+    });
+}
+exports.readDirWithFileTypes = readDirWithFileTypes;

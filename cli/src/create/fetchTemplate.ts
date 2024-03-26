@@ -1,6 +1,6 @@
 import * as AdmZip from 'adm-zip'
 import chalk from 'chalk';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as download from 'download-git-repo'
 import * as ora from 'ora'
 import * as path from 'path'
@@ -32,7 +32,7 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
 
     if (type === 'git') {
       name = path.basename(templateSource)
-      download(templateSource, path.join(tempPath, name), { clone }, async error => {
+      download(templateSource, path.join(tempPath, name), { clone }, async (error: string) => {
         if (error) {
           console.log(error)
           spinner.color = 'red'
@@ -61,7 +61,7 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
           spinner.succeed(`${ chalk.grey('拉取远程模板仓库成功！') }`)
           resolve()
         })
-        .on('error', async err => {
+        .on('error', async (err: string) => {
           spinner.color = 'red'
           spinner.fail(chalk.red(`拉取远程模板仓库失败！\n${ err }`))
           await fs.remove(tempPath)

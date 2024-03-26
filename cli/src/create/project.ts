@@ -1,6 +1,6 @@
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
-import fs from 'fs';
+import * as fs from 'fs-extra';
 import * as ora from 'ora';
 import * as path from 'path';
 import * as request from 'request';
@@ -95,9 +95,9 @@ class Project {
     const answers = await inquirer.prompt(prompts);
 
     prompts = [];
-    const templates = await this.fetchTemplates(answers)
-    await this.askTemplate(conf, prompts, templates)
-    const templateChoiceAnswer = await inquirer.prompt<IProjectConf>(prompts)
+    const templates = await this.fetchTemplates(answers);
+    await this.askTemplate(conf, prompts, templates);
+    const templateChoiceAnswer = await inquirer.prompt(prompts);
 
     return {
       ...answers,
@@ -395,10 +395,10 @@ class Project {
   }*/
 }
 
-function getOpenSourceTemplates (platform) {
+function getOpenSourceTemplates (platform: string) {
   return new Promise((resolve, reject) => {
     const spinner = ora({ text: '正在拉取开源模板列表...', discardStdin: false }).start()
-    request.get('https://gitee.com/NervJS/awesome-taro/raw/next/index.json', (error, _response, body) => {
+    request.get('https://gitee.com/NervJS/awesome-taro/raw/next/index.json', (error: string, _response: any, body: string) => {
       if (error) {
         spinner.fail(chalk.red('拉取开源模板列表失败！'))
         return reject(new Error())
