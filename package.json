@@ -1,0 +1,22 @@
+{
+  "name": "wise",
+  "version": "1.0.0",
+  "description": "wisejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WouldyouPlace/wise.git"
+  },
+  "keywords": [
+    "wisejs"
+  ],
+  "author": "vijay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WouldyouPlace/wise/issues"
+  },
+  "homepage": "https://github.com/WouldyouPlace/wise#readme"
+}
