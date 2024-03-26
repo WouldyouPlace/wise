@@ -27,6 +27,9 @@ class CLI {
         const _ = args._;
         const command = _[0];
         if (command) {
+            console.log(`您当前的命令是：${command}`);
+            console.log(`我说嘿，你说嘿`);
+            console.log(`嘿嘿！！！`);
         }
         else {
             if (args.h) {

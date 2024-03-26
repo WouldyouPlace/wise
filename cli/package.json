@@ -1,23 +1,21 @@
 {
-  "name": "@wisejs/cli",
-  "version": "1.0.2",
+  "name": "@wouldyouplace/cli",
+  "version": "1.0.3",
   "description": "cli tool",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node ./bin/wise -v",
     "build": "tsc",
     "test": "test"
   },
   "bin": {
-    "wise": "./bin/wise"
+    "wyp": "./bin/www"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WouldyouPlace/calmsea.git"
   },
   "keywords": [
-    "calmsea",
-    "calmsea cli"
+    "wouldyouplace cli"
   ],
   "author": "vijay",
   "license": "ISC",
