@@ -48,8 +48,14 @@ function createProject(options: Options) {
     const projectPath = path.join(options.projectRoot, options.projectName || tempFileName)
     fs.copySync(tmpSource, projectPath);
     fs.removeSync(options.templatePath);
-    const shellNpm = `${ options.npm?.toLowerCase() || 'npm'} install`;
-    console.log(chalk.grey(`开始安装依赖，运行${ shellNpm }   `));
+    const npmType = options.npm?.toLowerCase() || 'npm';
+    let shellNpm = '';
+    if (npmType === 'yarn') {
+      shellNpm = 'yarn';
+    } else {
+      shellNpm = `${npmType} install`;
+    }
+    console.log(chalk.grey(`开始运行${ shellNpm }，安装依赖`));
     shell.cd(projectPath);
     shell.exec(shellNpm);
     shell.exit(1);
