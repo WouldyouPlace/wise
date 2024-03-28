@@ -49,7 +49,7 @@ function createProject(options: Options) {
     fs.copySync(tmpSource, projectPath);
     fs.removeSync(options.templatePath);
     const shellNpm = `${ options.npm?.toLowerCase() || 'npm'} install`;
-    console.log(chalk.grey(`开始安装依赖，运行${ shellNpm }`));
+    console.log(chalk.grey(`开始安装依赖，运行${ shellNpm }   `));
     shell.cd(projectPath);
     shell.exec(shellNpm);
     shell.exit(1);
