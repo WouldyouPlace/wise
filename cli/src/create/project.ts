@@ -1,16 +1,18 @@
 import * as inquirer from 'inquirer';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
-import * as ora from 'ora';
+import ora from 'ora';
 import * as path from 'path';
 import * as request from 'request';
 import fetchTemplate from './fetchTemplate';
-import { NpmType, CSSType, FrameworkType, CompilerType, ITemplates } from "../types";
+import { NpmType, CSSType, FrameworkType, CompilerType, ITemplates, AnyJson } from "../types";
+import { CustomPartial } from "../types/utils";
 import {
-  DEFAULT_TEMPLATE_SRC_GITEE, DEFAULT_TEMPLATE_SRC,
-  NONE_AVAILABLE_TEMPLATE
+  DEFAULT_TEMPLATE_SRC
 } from '../config/index';
-import { checkNodeVersion, clearConsole, getRootPath } from "../utils";
+import { checkNodeVersion, clearConsole, getRootPath, getPkgVersion } from "../utils";
+import createProject from './createProject';
+
 
 export interface IProjectConf {
   projectName: string
@@ -31,7 +33,6 @@ export interface IProjectConf {
   compiler?: CompilerType
 }
 
-type CustomPartial<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 type IProjectConfOptions = CustomPartial<IProjectConf,  'projectName' | 'projectDir' | 'template' | 'css' | 'npm' | 'framework' | 'templateSource'>
 
@@ -65,16 +66,15 @@ class Project {
     clearConsole()
     console.log(chalk.green('即将创建一个新项目!'))
     console.log()
+    this.create();
   }
   async create() {
     try {
       const answers = await this.ask()
-      console.log(answers);
       const date = new Date()
       this.conf = Object.assign(this.conf, answers)
       this.conf.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-      console.log(this.conf)
-      // await createProject(this.conf)
+      this.write()
     } catch (error) {
       console.log(chalk.red('创建项目失败: ', error))
     }
@@ -88,12 +88,12 @@ class Project {
     this.askFramework(conf, prompts)
     this.askTypescript(conf, prompts)
     this.askCSS(conf, prompts)
-    this.askCompiler(conf, prompts)
+    // 打包方式
+    // this.askCompiler(conf, prompts)
     this.askNpm(conf, prompts)
-    await this.askTemplateSource(conf, prompts)
-
+    // 模板来源
+    // await this.askTemplateSource(conf, prompts)
     const answers = await inquirer.prompt(prompts);
-
     prompts = [];
     const templates = await this.fetchTemplates(answers);
     await this.askTemplate(conf, prompts, templates);
@@ -111,9 +111,9 @@ class Project {
       prompts.push({
         type: 'input',
         name: 'projectName',
-        message: '请输入项目名称！',
+        message: '请输入项目名称：',
         validate (input: string) {
-          if (!input) {
+          if (!(input || input.trim())) {
             return '项目名不能为空！'
           }
           // 查找文件是否存在
@@ -146,7 +146,7 @@ class Project {
       prompts.push({
         type: 'input',
         name: 'description',
-        message: '请输入项目介绍'
+        message: '请输入项目介绍：'
       })
     }
   }
@@ -166,7 +166,7 @@ class Project {
       prompts.push({
         type: 'list',
         name: 'css',
-        message: '请选择 CSS 预处理器（Sass/Less/Stylus）',
+        message: '请选择 CSS 预处理器（Sass/Less）',
         choices: [
           {
             name: 'Sass',
@@ -175,10 +175,6 @@ class Project {
           {
             name: 'Less',
             value: CSSType.Less
-          },
-          {
-            name: 'Stylus',
-            value: CSSType.Stylus
           },
           {
             name: '无',
@@ -201,8 +197,8 @@ class Project {
             value: CompilerType.Webpack5
           },
           {
-            name: 'Webpack4',
-            value: CompilerType.Webpack4
+            name: 'Vite',
+            value: CompilerType.Vite
           }
         ]
       })
@@ -221,7 +217,7 @@ class Project {
             value: FrameworkType.React
           },
           {
-            name: 'Vue',
+            name: 'Vue2',
             value: FrameworkType.Vue
           },
           {
@@ -260,94 +256,28 @@ class Project {
       })
     }
   }
-  askTemplateSource: AskMethods = async function (conf, prompts) {
-    if (conf.template === 'default' || conf.templateSource) return
-
-    const choices = [
-      {
-        name: 'Gitee（最快）',
-        value: DEFAULT_TEMPLATE_SRC_GITEE
-      },
-      {
-        name: 'Github（最新）',
-        value: DEFAULT_TEMPLATE_SRC
-      },
-      {
-        name: 'CLI 内置默认模板',
-        value: 'default-template'
-      },
-      {
-        name: '自定义',
-        value: 'self-input'
-      },
-      {
-        name: '社区优质模板源',
-        value: 'open-source'
-      }
-    ]
-
-    prompts.push({
-      type: 'list',
-      name: 'templateSource',
-      message: '请选择模板源',
-      choices
-    }, {
-      type: 'input',
-      name: 'templateSource',
-      message: '请输入模板源！',
-      askAnswered: true,
-      when (answers: any) {
-        return answers.templateSource === 'self-input'
-      }
-    }, {
-      type: 'list',
-      name: 'templateSource',
-      message: '请选择社区模板源',
-      async choices (answers: any) {
-        return await getOpenSourceTemplates(answers.framework)
-      },
-      askAnswered: true,
-      when (answers: any) {
-        return answers.templateSource === 'open-source'
-      }
-    })
-  }
   askTemplate: AskMethods = function (conf, prompts, list = []) {
-    const choices = [
-      {
-        name: '默认模板',
-        value: 'default'
-      },
-      ...list.map(item => ({
-        name: item.desc ? `${item.name}（${item.desc}）` : item.name,
-        value: item.name
-      }))
-    ]
-
     if ((typeof conf.template as 'string' | undefined) !== 'string') {
       prompts.push({
         type: 'list',
         name: 'template',
         message: '请选择模板',
-        choices
+        choices: [
+          {
+            name: '默认模板',
+            value: 'cli_template'
+          }
+        ]
       })
     }
   }
   async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
-    const { templateSource, framework } = answers
-    this.conf.templateSource = this.conf.templateSource || templateSource
-
-    // 使用默认模版
-    if (answers.templateSource === 'default-template') {
-      this.conf.template = 'default'
-      answers.templateSource = DEFAULT_TEMPLATE_SRC_GITEE
-    }
-    if (this.conf.template === 'default' || answers.templateSource === NONE_AVAILABLE_TEMPLATE) return Promise.resolve([])
+    const { framework } = answers
+    this.conf.templateSource = this.conf.templateSource || DEFAULT_TEMPLATE_SRC;
 
     // 从模板源下载模板
     const isClone = /gitee/.test(this.conf.templateSource) || this.conf.clone
     const templateChoices = await fetchTemplate(this.conf.templateSource, this.templatePath(''), isClone)
-
     // 根据用户选择的框架筛选模板
     return templateChoices.filter(templateChoice => {
         const { platforms } = templateChoice
@@ -367,13 +297,10 @@ class Project {
     }
     return filepath
   }
-  /*write (cb?: () => void) {
-    this.conf.src = SOURCE_DIR
+  write () {
     const { projectName, projectDir, template, autoInstall = true, framework, npm } = this.conf as IProjectConf
     // 引入模板编写者的自定义逻辑
     const templatePath = this.templatePath(template)
-    const handlerPath = path.join(templatePath, TEMPLATE_CREATOR)
-    const handler = fs.existsSync(handlerPath) ? require(handlerPath).handler : {}
     createProject({
       projectRoot: projectDir,
       projectName,
@@ -388,11 +315,9 @@ class Project {
       date: this.conf.date,
       description: this.conf.description,
       compiler: this.conf.compiler,
-      period: PeriodType.CreateAPP,
-    }, handler).then(() => {
-      cb && cb()
-    })
-  }*/
+      templatePath: templatePath
+    }).then(() => {})
+  }
 }
 
 function getOpenSourceTemplates (platform: string) {

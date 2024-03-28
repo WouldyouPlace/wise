@@ -1,6 +1,6 @@
 {
   "name": "@wouldyouplace/cli",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "wouldyouplace cli tool",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,8 @@
     "ora": "^5.0.0",
     "readline": "^1.3.0",
     "request": "^2.88.2",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "shelljs": "^0.8.5"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5",

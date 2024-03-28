@@ -1,11 +1,11 @@
-import * as AdmZip from 'adm-zip'
+import AdmZip from 'adm-zip'
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
-import * as download from 'download-git-repo'
-import * as ora from 'ora'
-import * as path from 'path'
-import * as request from 'request'
-import { getTemplateSourceType, readDirWithFileTypes } from '../utils'
+import download from 'download-git-repo';
+import ora from 'ora';
+import * as path from 'path';
+import * as request from 'request';
+import { getTemplateSourceType, readDirWithFileTypes } from '../utils';
 import { TEMPLATE_CREATOR } from '../config/index';
 
 export interface ITemplates {
@@ -14,18 +14,20 @@ export interface ITemplates {
   desc?: string
 }
 
-const TEMP_DOWNLOAD_FOLDER = 'taro-temp'
+const TEMP_DOWNLOAD_FOLDER = 'temp'
 
 export default function fetchTemplate(templateSource: string, templateRootPath: string, clone?: boolean): Promise<ITemplates[]> {
   const type = getTemplateSourceType(templateSource)
-  const tempPath = path.join(templateRootPath, TEMP_DOWNLOAD_FOLDER)
+  // const tempPath = path.join(templateRootPath, TEMP_DOWNLOAD_FOLDER)
+  const tempPath = templateRootPath
   let name: string
   let isFromUrl = false
-
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<void>(async (resolve) => {
     // 下载文件的缓存目录
-    if (fs.existsSync(tempPath)) await fs.remove(tempPath)
+    if (fs.existsSync(tempPath)) {
+      await fs.remove(tempPath)
+    }
     await fs.mkdir(tempPath)
 
     const spinner = ora(`正在从 ${ templateSource } 拉取远程模板...`).start()
@@ -34,7 +36,6 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
       name = path.basename(templateSource)
       download(templateSource, path.join(tempPath, name), { clone }, async (error: string) => {
         if (error) {
-          console.log(error)
           spinner.color = 'red'
           spinner.fail(chalk.red('拉取远程模板仓库失败！'))
           await fs.remove(tempPath)
@@ -43,7 +44,7 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
         spinner.color = 'green'
         spinner.succeed(`${ chalk.grey('拉取远程模板仓库成功！') }`)
         resolve()
-      })
+      });
     } else if (type === 'url') {
       // url 模板源，因为不知道来源名称，临时取名方便后续开发者从列表中选择
       name = 'from-remote-url'
@@ -72,13 +73,12 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
     const templateFolder = name ? path.join(tempPath, name) : ''
 
     // 下载失败，只显示默认模板
-    if (!fs.existsSync(templateFolder)) return Promise.resolve([])
 
+    if (!fs.existsSync(templateFolder)) return Promise.resolve([])
     const isTemplateGroup = !(
       fs.existsSync(path.join(templateFolder, 'package.json')) ||
       fs.existsSync(path.join(templateFolder, 'package.json.tmpl'))
     )
-
     if (isTemplateGroup) {
       // 模板组
       const files = readDirWithFileTypes(templateFolder)
@@ -88,9 +88,10 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
         files.map(file => {
           const src = path.join(templateFolder, file)
           const dest = path.join(templateRootPath, file)
+          console.log(src, dest)
           return fs.move(src, dest, { overwrite: true })
         })
-      )
+      );
       await fs.remove(tempPath)
 
       const res: ITemplates[] = files.map(name => {
@@ -109,8 +110,8 @@ export default function fetchTemplate(templateSource: string, templateRootPath: 
       return Promise.resolve(res)
     } else {
       // 单模板
-      await fs.move(templateFolder, path.join(templateRootPath, name), { overwrite: true })
-      await fs.remove(tempPath)
+      // await fs.move(templateFolder, path.join(templateRootPath, name), { overwrite: true })
+      // await fs.remove(tempPath)
 
       let res: ITemplates = { name, desc: isFromUrl ? templateSource : '' }
       const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)

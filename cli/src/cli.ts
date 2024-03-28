@@ -29,12 +29,21 @@ class CLI {
         if(command) {
             switch (command) {
                 case 'init': {
-                    new Project({})
+                    new Project({
+                        projectDir: this.appPath,
+                        projectName: _[1] || args.name,
+                        description: args.description,
+                        typescript: args.typescript,
+                        framework: args.framework,
+                        compiler: args.compiler,
+                        npm: args.npm,
+                        templateSource: args['template-source'],
+                        clone: !!args.clone,
+                        template: args.template,
+                        css: args.css,
+                    }).init()
                 } break;
             }
-            console.log(`这里是WYP工作台，您当前输入的命令：${command}`)
-            console.log(`我说嘿，你说嘿`)
-            console.log(`嘿嘿！！！`);
         } else {
             if (args.h) {
                 console.log('Usage: taro <command> [options]')
