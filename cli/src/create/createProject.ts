@@ -34,8 +34,11 @@ function createProject(options: Options) {
     const jsonUrl = path.join(tmpSource, 'package.json')
     const packageData: AnyJson = fs.readJsonSync(jsonUrl);
     packageData.name = options.projectName;
-    packageData.name = options.description;
+    packageData.description = options.description;
     if (css !== CSSType.None) {
+      if(!packageData.devDependencies) {
+        packageData.devDependencies = {};
+      }
       if (css === CSSType.Less) {
         packageData.devDependencies['less'] = '^4.2.0';
         packageData.devDependencies['less-loader'] = '^12.2.0';
